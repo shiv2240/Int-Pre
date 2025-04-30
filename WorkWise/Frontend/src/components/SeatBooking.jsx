@@ -17,7 +17,7 @@ const SeatBooking = () => {
     setIsLoading(true);
     try {
       const response = await axios.get(
-        "https://int-pre.onrender.com/api/auth/seat/available"
+        "http://localhost:2030/api/auth/seat/available"
       );
       setAvailableSeats(response.data.seats);
     } catch (error) {
@@ -45,7 +45,7 @@ const SeatBooking = () => {
 
     try {
       const response = await axios.post(
-        "https://int-pre.onrender.com/api/auth/seat/book",
+        "http://localhost:2030/api/auth/seat/book",
         { seatCount },
         {
           headers: {
@@ -80,7 +80,7 @@ const SeatBooking = () => {
 
     try {
       const response = await axios.post(
-        "https://int-pre.onrender.com/api/auth/seat/resetAll",
+        "http://localhost:2030/api/auth/seat/resetAll",
         {},
         {
           headers: {

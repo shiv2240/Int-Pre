@@ -21,61 +21,82 @@ module.exports.book = async (req, res) => {
 
   try {
     const user = await User.findById(req.userId);
-
     if (!user) {
       return res.status(404).json({ message: "User not found" });
     }
 
     const availableSeats = await Seat.find({ isBooked: false }).sort({
       row: 1,
-      position: 1,
+      seatNumber: 1,
     });
 
     const seatsByRow = {};
-    availableSeats.forEach((seat) => {
+    for (const seat of availableSeats) {
       if (!seatsByRow[seat.row]) seatsByRow[seat.row] = [];
       seatsByRow[seat.row].push(seat);
-    });
+    }
 
-    for (const row of Object.keys(seatsByRow)) {
+    for (const row in seatsByRow) {
       const rowSeats = seatsByRow[row];
-      if (rowSeats.length >= seatCount) {
-        const selectedSeats = rowSeats.slice(0, seatCount);
-        for (let seat of selectedSeats) {
-          seat.isBooked = true;
-          seat.bookedBy = user._id;
-          await seat.save();
+
+      for (let i = 0; i <= rowSeats.length - seatCount; i++) {
+        let contiguous = true;
+
+        for (let j = 0; j < seatCount - 1; j++) {
+          const current = rowSeats[i + j];
+          const next = rowSeats[i + j + 1];
+
+          if (next.seatNumber !== current.seatNumber + 1) {
+            contiguous = false;
+            break;
+          }
         }
-        const seatDetails = selectedSeats
-          .map((seat) => `Row ${seat.row}, Seat ${seat.seatNumber}`)
-          .join(" | ");
-        return res.status(200).json({
-          message: `Seats booked across nearby rows: ${seatDetails}`,
-          seats: selectedSeats,
-        });
+
+        if (contiguous) {
+          const selectedSeats = rowSeats.slice(i, i + seatCount);
+
+          for (let seat of selectedSeats) {
+            seat.isBooked = true;
+            seat.bookedBy = user._id;
+            await seat.save();
+          }
+
+          const seatDetails = selectedSeats
+            .map((seat) => `Row ${seat.row}, Seat ${seat.seatNumber}`)
+            .join(" | ");
+
+          return res.status(200).json({
+            message: `Seats booked together: ${seatDetails}`,
+            seats: selectedSeats,
+          });
+        }
       }
     }
 
-    const selectedSeats = availableSeats.slice(0, seatCount);
-    if (selectedSeats.length < seatCount) {
+    if (availableSeats.length < seatCount) {
       return res.status(400).json({
         message: "Not enough seats available",
       });
     }
 
+    const selectedSeats = availableSeats.slice(0, seatCount);
     for (let seat of selectedSeats) {
       seat.isBooked = true;
       seat.bookedBy = user._id;
       await seat.save();
     }
 
+    const seatDetails = selectedSeats
+      .map((seat) => `Row ${seat.row}, Seat ${seat.seatNumber}`)
+      .join(" | ");
+
     return res.status(200).json({
-      message: "Seats booked across nearby rows",
+      message: `Seats booked (not all together): ${seatDetails}`,
       seats: selectedSeats,
     });
   } catch (err) {
     console.error("Booking error:", err);
-    res.status(500).json({ message: "Unable to book seats", err });
+    return res.status(500).json({ message: "Unable to book seats", err });
   }
 };
 
