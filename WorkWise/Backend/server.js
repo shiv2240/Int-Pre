@@ -15,7 +15,6 @@ app.use(
     credentials: true, 
   })
 );
-app.options("*", cors());
 app.use("/api/auth/", router)
 app.use("/api/auth/seat", router2)
 
