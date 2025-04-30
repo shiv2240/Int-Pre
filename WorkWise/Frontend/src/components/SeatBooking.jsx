@@ -51,11 +51,13 @@ const SeatBooking = () => {
         {availableSeats.length === 0 ? (
           <p>No available seats</p>
         ) : (
-          availableSeats.map((seat, index) => (
-            <div key={index} className="seat">
-              <span>Row {seat.row}, Seat {seat.seatNumber}</span>
-            </div>
-          ))
+          <div className="seat-grid">
+            {availableSeats.map((seat, index) => (
+              <div key={index} className="seat">
+                <span>Row {seat.row}, Seat {seat.seatNumber}</span>
+              </div>
+            ))}
+          </div>
         )}
       </div>
 

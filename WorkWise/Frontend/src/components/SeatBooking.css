@@ -8,6 +8,9 @@
   flex: 0.6;
   padding-right: 20px;
   border-right: 2px solid #ccc;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
 }
 
 .seat-booking-form {
@@ -21,11 +24,20 @@
   margin-bottom: 10px;
 }
 
+.seat-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(100px, 1fr));
+  grid-gap: 10px;
+}
+
 .seat {
   background-color: black;
+  color: white;
   padding: 10px;
-  margin-bottom: 8px;
+  text-align: center;
   border-radius: 5px;
+  font-size: 0.9rem;
+  cursor: pointer;
 }
 
 .seat-count-container {
