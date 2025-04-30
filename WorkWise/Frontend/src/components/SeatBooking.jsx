@@ -12,7 +12,7 @@ const SeatBooking = () => {
   useEffect(() => {
     const fetchSeats = async () => {
       try {
-        const response = await axios.get("http://localhost:2030/api/auth/seat/available");
+        const response = await axios.get("https://int-pre.onrender.com/api/auth/seat/available");
         setAvailableSeats(response.data.seats);
       } catch (error) {
         setMessage("Error fetching available seats.", error);
@@ -30,7 +30,7 @@ const SeatBooking = () => {
 
     try {
       const response = await axios.post(
-        "http://localhost:2030/api/auth/seat/book",
+        "https://int-pre.onrender.com/api/auth/seat/book",
         { seatCount },
         {
           headers: {

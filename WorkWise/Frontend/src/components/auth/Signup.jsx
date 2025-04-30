@@ -9,7 +9,7 @@ const Signup = () => {
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
-      await axios.post("http://localhost:2030/api/auth/signup", {
+      await axios.post("https://int-pre.onrender.com/api/auth/signup", {
         username,
         password,
       });

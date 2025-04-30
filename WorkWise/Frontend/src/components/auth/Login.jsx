@@ -14,7 +14,7 @@ const Login = () => {
     e.preventDefault();
     try {
       const response = await axios.post(
-        "http://localhost:2030/api/auth/login",
+        "https://int-pre.onrender.com/api/auth/login",
         {
           username,
           password,
