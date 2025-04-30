@@ -3,7 +3,7 @@ const User = require("../models/User.js");
 
 module.exports.available = async (req, res) => {
   try {
-    const seats = await Seat.find({ isBooked: false });
+    const seats = await Seat.find();
     res.json({ message: "Here are all available Seats", seats });
   } catch (err) {
     res.status(500).json({ message: "Unable to fetch Seats", err });
@@ -20,7 +20,6 @@ module.exports.book = async (req, res) => {
   }
 
   try {
-
     const user = await User.findById(req.userId);
 
     if (!user) {
@@ -47,8 +46,11 @@ module.exports.book = async (req, res) => {
           seat.bookedBy = user._id;
           await seat.save();
         }
+        const seatDetails = selectedSeats
+          .map((seat) => `Row ${seat.row}, Seat ${seat.seatNumber}`)
+          .join(" | ");
         return res.status(200).json({
-          message: `Seats booked successfully in row ${row}`,
+          message: `Seats booked across nearby rows: ${seatDetails}`,
           seats: selectedSeats,
         });
       }
@@ -92,5 +94,14 @@ module.exports.cancel = async (req, res) => {
     res.status(200).json({ message: "Booking cancelled Successfully" });
   } catch (err) {
     res.status(500).json({ message: "Unable to cancel at this moment", err });
+  }
+};
+
+module.exports.resetAll = async (req, res) => {
+  try {
+    await Seat.updateMany({}, { isBooked: false, bookedBy: null });
+    res.status(200).json({ message: "All seat bookings have been reset." });
+  } catch (err) {
+    res.status(500).json({ message: "Unable to reset seats", err });
   }
 };

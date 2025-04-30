@@ -22,6 +22,10 @@ npm start
 ```
 Runs at `https://workwise-intpre.netlify.app/`
 
+Demo -
+Username - `shiv@123`
+Password - `shiv@123`
+
 ## Backend Setup
 ```bash
 cd seat-booking-app/backend
