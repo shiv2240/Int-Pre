@@ -155,7 +155,7 @@ const SeatBooking = () => {
                     <p className="text-gray-500">No available seats</p>
                   </div>
                 ) : (
-                  <div className="grid grid-cols-7 gap-2">
+                  <div className="grid grid-cols-3 sm:grid-cols-4 md:grid-cols-5 lg:grid-cols-6 xl:grid-cols-7 gap-2">
                     {availableSeats.map((seat, index) => (
                       <div
                         key={index}
