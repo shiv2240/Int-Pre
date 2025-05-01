@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from "react";
 import axios from "axios";
 import { Loader, AlertCircle, Check } from "lucide-react";
+  import { ToastContainer, toast } from 'react-toastify';
 
 const SeatBooking = () => {
   const [availableSeats, setAvailableSeats] = useState([]);
@@ -11,6 +12,10 @@ const SeatBooking = () => {
   const [isBooking, setIsBooking] = useState(false);
   const [isResetting, setIsResetting] = useState(false);
 
+  const [totalSeats, setTotalSeats] = useState(0);
+  const [bookedSeats, setBookedSeats] = useState(0);
+  const [availableSeatsCount, setAvailableSeatsCount] = useState(0);
+
   const token = localStorage.getItem("token");
 
   const fetchSeats = async () => {
@@ -19,10 +24,14 @@ const SeatBooking = () => {
       const response = await axios.get(
         "https://int-pre.onrender.com/api/auth/seat/available"
       );
-      setAvailableSeats(response.data.seats);
+      const seats = response.data.seats;
+      setAvailableSeats(seats);
+      setTotalSeats(seats.length);
+      setBookedSeats(seats.filter((seat) => seat.isBooked).length);
+      setAvailableSeatsCount(seats.filter((seat) => !seat.isBooked).length);
     } catch (error) {
-      setMessage("Error fetching available seats.");
-      setMessageType("error", error);
+      setMessage("Error fetching available seats.", error);
+      setMessageType("error");
     } finally {
       setIsLoading(false);
     }
@@ -64,6 +73,7 @@ const SeatBooking = () => {
       setMessageType("error");
     } finally {
       setIsBooking(false);
+      toast.success(`Seats booked successfully! `);
     }
   };
 
@@ -79,7 +89,7 @@ const SeatBooking = () => {
     setMessageType("");
 
     try {
-      const response = await axios.post(
+      const response = await axios.post(  
         "https://int-pre.onrender.com/api/auth/seat/resetAll",
         {},
         {
@@ -144,6 +154,16 @@ const SeatBooking = () => {
               <p className="mt-1 text-sm text-white">
                 Green seats are available, gray seats are booked
               </p>
+
+              <div className="my-4 space-y-1">
+                <p className="text-gray-200 font-bold text-lg">
+                  Total Seats: {totalSeats}
+                </p>
+                <p className="text-green-400">
+                  Available Seats: {availableSeatsCount}
+                </p>
+                <p className="text-red-400">Booked Seats: {bookedSeats}</p>
+              </div>
 
               <div className="mt-8">
                 {isLoading ? (
@@ -231,6 +251,7 @@ const SeatBooking = () => {
                     )}
                   </button>
                 </div>
+                <ToastContainer/>
               </div>
             </div>
           </div>
