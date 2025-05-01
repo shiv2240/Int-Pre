@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from "react";
 import axios from "axios";
 import { Loader, AlertCircle, Check } from "lucide-react";
-  import { ToastContainer, toast } from 'react-toastify';
+import { ToastContainer, toast } from "react-toastify";
 
 const SeatBooking = () => {
   const [availableSeats, setAvailableSeats] = useState([]);
@@ -40,7 +40,11 @@ const SeatBooking = () => {
   useEffect(() => {
     fetchSeats();
   }, []);
-
+  const speak = (text) => {
+    const utterance = new SpeechSynthesisUtterance(text);
+    utterance.lang = "en-US";
+    speechSynthesis.speak(utterance);
+  };
   const handleBooking = async () => {
     if (!token) {
       setMessage("Please log in to book seats.");
@@ -73,7 +77,10 @@ const SeatBooking = () => {
       setMessageType("error");
     } finally {
       setIsBooking(false);
-      toast.success(`Seats booked successfully! `);
+
+      const message = "Seats booked successfully!";
+      speak(message);
+      toast.success(message);
     }
   };
 
@@ -89,7 +96,7 @@ const SeatBooking = () => {
     setMessageType("");
 
     try {
-      const response = await axios.post(  
+      const response = await axios.post(
         "https://int-pre.onrender.com/api/auth/seat/resetAll",
         {},
         {
@@ -251,7 +258,7 @@ const SeatBooking = () => {
                     )}
                   </button>
                 </div>
-                <ToastContainer/>
+                <ToastContainer />
               </div>
             </div>
           </div>
